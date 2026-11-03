@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>DFRNT Driver Top-ups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: ink-blue band, then a 760px reading column. Screen mock-ups break out to 960px so tables stay legible. */
+:root {
+  --ink: #0d0c2c; --ink-2: #141233; --on-ink: #ffffff; --on-ink-dim: #b9b8d6;
+  --cyan: #3bc7f4; --cyan-text: #1590c0; --cyan-soft: #e3f6fd;
+  --page: #f4f2f1; --surface: #ffffff; --surface-2: #f8f7f6; --fg: #1b1a33; --fg-dim: #5d5b74; --line: #e3e0de;
+  --green: #13b964; --green-soft: #e2f7ec; --green-text: #0b7f44;
+  --red: #e5484d; --red-soft: #fdecec; --red-text: #c22f35;
+  --orange: #fe811a;
+  --font: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r-ctl: 8px; --r-card: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0b0a22; --surface: #17153a; --surface-2: #1d1b44; --fg: #ecebf7; --fg-dim: #a6a4c4; --line: #2b2952;
+    --cyan-text: #6fd8f8; --cyan-soft: #12304a; --ink: #07061a; --ink-2: #100e2b;
+    --green-soft: #12352a; --green-text: #5fe0a0; --red-soft: #3a1a24; --red-text: #ff8a8e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0b0a22; --surface: #17153a; --surface-2: #1d1b44; --fg: #ecebf7; --fg-dim: #a6a4c4; --line: #2b2952;
+  --cyan-text: #6fd8f8; --cyan-soft: #12304a; --ink: #07061a; --ink-2: #100e2b;
+  --green-soft: #12352a; --green-text: #5fe0a0; --red-soft: #3a1a24; --red-text: #ff8a8e; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wide { max-width: 960px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { text-wrap: balance; line-height: 1.2; margin: 0; }
+p { margin: 0; }
+.num { font-variant-numeric: tabular-nums; }
+
+.band { background: var(--ink); color: var(--on-ink); }
+.band .wrap { padding-block: 40px 44px; display: grid; gap: 14px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); }
+.band h1 { font-size: clamp(30px, 6vw, 44px); font-weight: 800; letter-spacing: -.01em; }
+.band p { color: var(--on-ink-dim); max-width: 60ch; font-size: 17px; }
+.band .note { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; color: var(--on-ink); background: var(--ink-2); border: 1px solid #2c2a5c; border-radius: 999px; padding: 6px 12px; width: fit-content; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); flex: none; }
+
+main { padding-block: 36px 56px; display: grid; gap: 48px; }
+section { display: grid; gap: 16px; }
+h2 { font-size: 24px; font-weight: 800; }
+.lede { color: var(--fg-dim); max-width: 65ch; }
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 720px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .grid { grid-template-columns: 1fr; } }
+.cap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: 18px; display: grid; gap: 6px; align-content: start; }
+.cap .k { font-size: 12px; font-weight: 700; color: var(--cyan-text); letter-spacing: .06em; text-transform: uppercase; }
+.cap h3 { font-size: 16px; font-weight: 700; }
+.cap p { font-size: 14px; color: var(--fg-dim); }
+
+.detail { display: grid; gap: 10px; }
+.detail h3 { font-size: 18px; font-weight: 700; }
+.detail ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.detail li { max-width: 65ch; }
+.detail li::marker { color: var(--cyan-text); }
+
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.tbl table { min-width: 560px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-dim); font-weight: 700; }
+td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+tfoot td { font-weight: 700; background: var(--surface-2); }
+.yes { color: var(--green-text); font-weight: 700; }
+.no { color: var(--fg-dim); }
+
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; counter-reset: step; }
+@media (max-width: 760px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .flow { grid-template-columns: 1fr; } }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: 18px; display: grid; gap: 6px; align-content: start; counter-increment: step; }
+.step::before { content: "Step " counter(step); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--cyan-text); }
+.step h3 { font-size: 16px; }
+.step p { font-size: 14px; color: var(--fg-dim); }
+
+/* Screen mock-ups */
+.screens { display: grid; gap: 40px; }
+figure { margin: 0; display: grid; gap: 12px; }
+figcaption { display: grid; gap: 4px; max-width: 70ch; }
+figcaption .where { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--cyan-text); }
+figcaption h3 { font-size: 18px; }
+figcaption p { color: var(--fg-dim); font-size: 15px; }
+.app { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(13,12,44,.06), 0 8px 24px rgba(13,12,44,.06); }
+.app-bar { background: var(--ink); color: var(--on-ink); display: flex; align-items: center; gap: 10px; padding: 9px 14px; font-size: 13px; }
+.app-bar .crumb { color: var(--on-ink-dim); }
+.app-bar .crumb b { color: var(--on-ink); font-weight: 600; }
+.app-bar .pill { margin-left: auto; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--cyan); color: var(--ink); border-radius: 999px; padding: 2px 9px; }
+.app-body { padding: 16px; display: grid; gap: 14px; overflow-x: auto; }
+.app-body table { min-width: 640px; font-size: 13px; }
+.app-body th, .app-body td { padding: 9px 10px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+.ctl { border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 6px 10px; background: var(--surface-2); color: var(--fg); }
+.ctl.on { border-color: var(--cyan); background: var(--cyan-soft); color: var(--cyan-text); font-weight: 700; }
+.btn { display: inline-block; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 700; border: 1px solid var(--cyan); color: var(--cyan-text); background: transparent; white-space: nowrap; }
+.btn.fill { background: var(--cyan); color: var(--ink); }
+.tag { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.tag.behind { background: var(--red-soft); color: var(--red-text); }
+.tag.ok { background: var(--green-soft); color: var(--green-text); }
+.tag.done { background: var(--cyan-soft); color: var(--cyan-text); }
+tr.behind td:first-child { box-shadow: inset 3px 0 0 var(--red); }
+.new { outline: 2px dashed var(--orange); outline-offset: 3px; border-radius: 8px; }
+.newnote { font-size: 12px; color: var(--orange); font-weight: 700; }
+
+.form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 620px) { .form { grid-template-columns: 1fr; } }
+.field { display: grid; gap: 4px; font-size: 13px; }
+.field span { color: var(--fg-dim); font-weight: 600; }
+.field .val { border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 8px 10px; background: var(--surface-2); font-weight: 600; }
+.switch { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.switch i { width: 34px; height: 20px; border-radius: 999px; background: var(--cyan); position: relative; }
+.switch i::after { content: ""; position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.panel { border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 12px; background: var(--surface); }
+.panel h4 { margin: 0; font-size: 14px; }
+.lock { font-size: 12px; color: var(--fg-dim); }
+
+.dispatch { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px; min-width: 640px; }
+.dl { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.dl h5 { margin: 0; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-dim); background: var(--surface-2); padding: 7px 10px; border-bottom: 1px solid var(--line); }
+.drow { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.drow:last-child { border-bottom: 0; }
+.drow .no { width: 34px; font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+.drow .nm { flex: 1; }
+.drow .jobs { font-size: 12px; color: var(--fg-dim); }
+.drow.behind { background: var(--red-soft); box-shadow: inset 3px 0 0 var(--red); }
+.drow.sel { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.flag { width: 10px; height: 10px; border-radius: 50%; background: var(--red); flex: none; }
+.card { border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; align-content: start; }
+.card h4 { margin: 0; font-size: 15px; }
+.card .meta { font-size: 13px; color: var(--fg-dim); }
+.behindbox { border-radius: 8px; background: var(--red-soft); color: var(--red-text); padding: 10px 12px; font-weight: 700; font-size: 14px; }
+.behindbox small { display: block; font-weight: 500; color: var(--fg-dim); font-size: 12px; margin-top: 2px; }
+.search { border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 7px 10px; font-size: 13px; color: var(--fg-dim); background: var(--surface-2); }
+
+.same { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: 20px 22px; }
+.same ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.same li::marker { color: var(--green); }
+
+.qs { display: grid; gap: 14px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: 18px; display: grid; gap: 8px; }
+.q label { font-weight: 700; }
+.q .hint { font-size: 14px; color: var(--fg-dim); }
+textarea { width: 100%; min-height: 76px; resize: vertical; font: inherit; font-size: 15px; color: var(--fg); background: var(--page); border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 10px 12px; }
+textarea:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.who { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .who { grid-template-columns: 1fr; } }
+.who input { width: 100%; font: inherit; font-size: 15px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 10px 12px; }
+.who label { display: grid; gap: 6px; font-weight: 700; font-size: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+button { font: inherit; font-weight: 700; font-size: 15px; border-radius: var(--r-ctl); padding: 11px 18px; cursor: pointer; border: 1px solid var(--cyan); }
+.primary { background: var(--cyan); color: #0d0c2c; }
+.secondary { background: transparent; color: var(--cyan-text); }
+.status { font-size: 14px; color: var(--fg-dim); }
+#fallback { width: 100%; min-height: 160px; }
+footer { color: var(--fg-dim); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="wrap">
+    <span class="eyebrow">DFRNT · Plan for your feedback</span>
+    <h1>Minimum hourly pay top-ups</h1>
+    <p>DFRNT works out each driver's hours from their jobs, compares what their jobs earned with their guaranteed hourly rate over the pay period, and suggests a top-up for a manager to approve. Dispatchers can see who is falling behind, so they can steer work their way, without ever seeing anyone's pay rate.</p>
+    <span class="note"><span class="dot" aria-hidden="true"></span>This is a plan. The screens below are mock-ups with made-up drivers, not live screens.</span>
+  </div>
+</header>
+
+<main>
+
+<div class="wrap"><section aria-labelledby="glance">
+<h2 id="glance">What it does</h2>
+<div class="grid">
+<div class="cap"><span class="k">Hours</span><h3>Hours from the jobs</h3><p>Each driver's day runs from their first pickup to their last drop. No timesheets to fill in.</p></div>
+<div class="cap"><span class="k">Hours</span><h3>Minimum per shift</h3><p>A short day is paid at the driver's minimum, for example 3 or 4 hours.</p></div>
+<div class="cap"><span class="k">Pay</span><h3>Across the pay period</h3><p>Hours and earnings add up over the fortnight, so a good day can make up for a quiet one.</p></div>
+<div class="cap"><span class="k">Pay</span><h3>Approve, then pay</h3><p>A manager approves each suggested top-up. It goes on the driver's next pay run as an extra payment.</p></div>
+<div class="cap"><span class="k">Dispatch</span><h3>See who's behind</h3><p>Drivers who are behind are highlighted on the dispatch board each morning, with how far behind they are.</p></div>
+<div class="cap"><span class="k">Privacy</span><h3>Pay rates stay private</h3><p>Hourly rates and minimum hours are set in Accounts. Operations staff never see them.</p></div>
+</div>
+</section></div>
+
+<div class="wrap"><section aria-labelledby="how">
+<h2 id="how">How the numbers work</h2>
+<p class="lede">An example driver on $40.00 an hour with a 4-hour minimum, over five days of a pay period. Hours round up to the next 15 minutes.</p>
+<div class="tbl">
+<table>
+<thead><tr><th>Day</th><th>First pickup</th><th>Last drop</th><th class="r">Actual hours</th><th class="r">Paid hours</th><th class="r">Jobs earned</th></tr></thead>
+<tbody>
+<tr><td>Mon</td><td class="num">8:05</td><td class="num">14:50</td><td class="r">6.75</td><td class="r">6.75</td><td class="r">$236.00</td></tr>
+<tr><td>Tue</td><td class="num">8:30</td><td class="num">10:40</td><td class="r">2.25</td><td class="r">4.00 <span class="no">(minimum)</span></td><td class="r">$72.00</td></tr>
+<tr><td>Wed</td><td class="num">7:55</td><td class="num">16:10</td><td class="r">8.25</td><td class="r">8.25</td><td class="r">$361.00</td></tr>
+<tr><td>Thu</td><td class="num">9:00</td><td class="num">12:20</td><td class="r">3.50</td><td class="r">4.00 <span class="no">(minimum)</span></td><td class="r">$118.00</td></tr>
+<tr><td>Fri</td><td class="num">8:10</td><td class="num">15:35</td><td class="r">7.50</td><td class="r">7.50</td><td class="r">$262.00</td></tr>
+</tbody>
+<tfoot><tr><td colspan="4">Period total</td><td class="r">30.50</td><td class="r">$1,049.00</td></tr></tfoot>
+</table>
+</div>
+<div class="detail">
+<ul>
+<li><b>Guaranteed:</b> 30.5 paid hours × $40.00 = <b>$1,220.00</b></li>
+<li><b>Jobs earned:</b> <b>$1,049.00</b></li>
+<li><b>Suggested top-up:</b> $1,220.00 − $1,049.00 = <b>$171.00</b>. If the jobs earn more than the guarantee, there's no top-up.</li>
+<li>A manager can correct a day's hours, for example when a driver finished early for an appointment, broke down, or sat on their last job. Every change needs a reason.</li>
+</ul>
+</div>
+</section></div>
+
+<div class="wrap"><section aria-labelledby="see">
+<h2 id="see">Who sees what</h2>
+<div class="tbl">
+<table>
+<thead><tr><th>What</th><th>Accounts and admins</th><th>Dispatchers</th></tr></thead>
+<tbody>
+<tr><td>Driver's hourly rate and minimum hours</td><td class="yes">Set and see</td><td class="no">Never</td></tr>
+<tr><td>Hours worked</td><td class="yes">Yes, by day</td><td class="yes">Yes, for the period</td></tr>
+<tr><td>Amount behind for the pay period</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+<tr><td>Amount owed, margin and fuel</td><td class="yes">Yes</td><td class="no">No</td></tr>
+<tr><td>Approve top-ups and adjust hours</td><td class="yes">Yes</td><td class="no">No</td></tr>
+</tbody>
+</table>
+</div>
+</section></div>
+
+<div class="wide"><section aria-labelledby="screens">
+<h2 id="screens">The screens</h2>
+<p class="lede">Each new part is marked with an orange dashed outline. The rest of each screen is as it is today.</p>
+
+<div class="screens">
+
+<figure>
+<figcaption><span class="where">Accounts · Contractors · driver record</span><h3>1. Set the driver's rate and minimum hours</h3><p>Each eligible driver's courier record in Accounts gets an hourly rate and a minimum number of hours per shift. Only Accounts users and admins can see this panel.</p></figcaption>
+<div class="app" role="img" aria-label="Mock-up of the driver record in Accounts with a new Hourly top-up panel">
+<div class="app-bar"><span class="crumb">Contractors › <b>Sam Taylor</b></span><span class="pill">Accounts</span></div>
+<div class="app-body">
+<div class="toolbar"><span class="ctl on">Details</span><span class="ctl">Settlements</span><span class="ctl">Invoices</span><span class="ctl">Deductions</span><span class="ctl">Extra payments</span><span class="ctl">Activity</span></div>
+<div class="form">
+<div class="field"><span>Driver code</span><div class="val">214</div></div>
+<div class="field"><span>Fleet</span><div class="val">Vans</div></div>
+<div class="field"><span>Payment method</span><div class="val">Direct (RCTI)</div></div>
+</div>
+<div class="panel new">
+<h4>Hourly top-up <span class="newnote">New</span></h4>
+<div class="form">
+<div class="field"><span>Eligible for top-up</span><div class="switch"><i></i> On</div></div>
+<div class="field"><span>Hourly rate</span><div class="val num">$40.00</div></div>
+<div class="field"><span>Minimum hours per shift</span><div class="val num">4.00</div></div>
+</div>
+<p class="lock">Visible to Accounts and admins only. Changes are recorded on the Activity tab.</p>
+</div>
+</div>
+</div>
+</figure>
+
+<figure>
+<figcaption><span class="where">Accounts · Driver earnings report</span><h3>2. Review and approve top-ups</h3><p>The Driver earnings report gets a pay-period view. Drivers who are behind sort to the top. Approving creates an extra payment on the driver's next pay run, and can be undone until that pay run is processed.</p></figcaption>
+<div class="app" role="img" aria-label="Mock-up of the Accounts Driver earnings report in pay-period view with suggested top-ups">
+<div class="app-bar"><span class="crumb">Contractor settlements › <b>Driver earnings</b></span><span class="pill">Accounts</span></div>
+<div class="app-body">
+<div class="toolbar"><span class="ctl">By date</span><span class="ctl on new">Pay period</span><span class="ctl">19 Oct – 1 Nov</span><span class="ctl">All fleets</span><span style="margin-left:auto" class="btn fill">Approve selected</span></div>
+<table>
+<thead><tr><th>Driver</th><th>Fleet</th><th class="r">Days</th><th class="r">Paid hours</th><th class="r">Rate</th><th class="r">Guaranteed</th><th class="r">Jobs earned</th><th class="r">Top-up</th><th>Status</th></tr></thead>
+<tbody>
+<tr class="behind"><td>Sam Taylor</td><td>Vans</td><td class="r">5</td><td class="r">30.50</td><td class="r">$40.00</td><td class="r">$1,220.00</td><td class="r">$1,049.00</td><td class="r"><b>$171.00</b></td><td><span class="btn fill">Approve</span> <span class="btn">Decline</span></td></tr>
+<tr class="behind"><td>Jo Nguyen</td><td>Pushbikes</td><td class="r">6</td><td class="r">26.00</td><td class="r">$32.00</td><td class="r">$832.00</td><td class="r">$790.40</td><td class="r"><b>$41.60</b></td><td><span class="tag done">Approved</span> <span class="btn">Undo</span></td></tr>
+<tr><td>Alex Martin</td><td>Cars</td><td class="r">8</td><td class="r">61.25</td><td class="r">$36.00</td><td class="r">$2,205.00</td><td class="r">$2,480.10</td><td class="r">–</td><td><span class="tag ok">On target</span></td></tr>
+<tr><td>Priya Singh</td><td>Vans</td><td class="r">4</td><td class="r">18.00</td><td class="r">$40.00</td><td class="r">$720.00</td><td class="r">$731.50</td><td class="r">–</td><td><span class="tag ok">On target</span></td></tr>
+</tbody>
+</table>
+<p class="newnote">New columns: days, paid hours, rate, guaranteed, top-up and status. The existing gross charge, fuel and margin columns stay.</p>
+</div>
+</div>
+</figure>
+
+<figure>
+<figcaption><span class="where">Accounts · Driver earnings report · one driver</span><h3>3. Check a driver's days and correct hours</h3><p>Open a driver to see each day's first pickup, last drop and paid hours, and the jobs behind them. A manager can change a day's hours, with a reason.</p></figcaption>
+<div class="app" role="img" aria-label="Mock-up of one driver's daily hours with an adjust option">
+<div class="app-bar"><span class="crumb">Driver earnings › <b>Sam Taylor · 19 Oct – 1 Nov</b></span><span class="pill">Accounts</span></div>
+<div class="app-body">
+<table>
+<thead><tr><th>Day</th><th>First pickup</th><th>Last drop</th><th class="r">Actual</th><th class="r">Minimum</th><th class="r">Paid hours</th><th class="r">Jobs</th><th class="r">Earned</th><th></th></tr></thead>
+<tbody>
+<tr><td>Mon 26 Oct</td><td>8:05</td><td>14:50</td><td class="r">6.75</td><td class="r">4.00</td><td class="r">6.75</td><td class="r">9</td><td class="r">$236.00</td><td><span class="btn">Jobs</span> <span class="btn new">Adjust</span></td></tr>
+<tr><td>Tue 27 Oct</td><td>8:30</td><td>10:40</td><td class="r">2.25</td><td class="r">4.00</td><td class="r">4.00</td><td class="r">3</td><td class="r">$72.00</td><td><span class="btn">Jobs</span> <span class="btn new">Adjust</span></td></tr>
+<tr><td>Wed 28 Oct</td><td>7:55</td><td>16:10</td><td class="r">8.25</td><td class="r">4.00</td><td class="r">8.25</td><td class="r">13</td><td class="r">$361.00</td><td><span class="btn">Jobs</span> <span class="btn new">Adjust</span></td></tr>
+<tr><td>Thu 29 Oct</td><td>9:00</td><td>12:20</td><td class="r">3.50</td><td class="r">4.00</td><td class="r">4.00</td><td class="r">5</td><td class="r">$118.00</td><td><span class="btn">Jobs</span> <span class="btn new">Adjust</span></td></tr>
+<tr><td>Fri 30 Oct</td><td>8:10</td><td>15:35</td><td class="r">7.50</td><td class="r">4.00</td><td class="r">7.50</td><td class="r">11</td><td class="r">$262.00</td><td><span class="btn">Jobs</span> <span class="btn new">Adjust</span></td></tr>
+</tbody>
+<tfoot><tr><td colspan="5">Period</td><td class="r">30.50</td><td class="r">41</td><td class="r">$1,049.00</td><td></td></tr></tfoot>
+</table>
+</div>
+</div>
+</figure>
+
+<figure>
+<figcaption><span class="where">Dispatch · main dispatch board</span><h3>4. Drivers who are behind are highlighted</h3><p>In the driver location lists, drivers who are behind for the pay period are marked in red. The figure refreshes overnight, so it holds for the day. Clicking a driver, or searching for one, shows only how far behind they are. No rates, no hours owed.</p></figcaption>
+<div class="app" role="img" aria-label="Mock-up of the dispatch driver lists with one driver highlighted as behind, and the driver detail showing the amount behind">
+<div class="app-bar"><span class="crumb">Dashboards › <b>Dispatch</b></span><span class="pill">Dispatch</span></div>
+<div class="app-body">
+<div class="dispatch">
+<div style="display:grid;gap:10px;align-content:start">
+<div class="search">Search by courier name or number…</div>
+<div class="dl">
+<h5>City · clear</h5>
+<div class="drow behind sel new"><span class="flag" aria-hidden="true"></span><span class="no">214</span><span class="nm">Sam Taylor</span><span class="jobs">Van · 1 on</span></div>
+<div class="drow"><span class="no">118</span><span class="nm">Alex Martin</span><span class="jobs">Car · 0 on</span></div>
+</div>
+<div class="dl">
+<h5>North · 3 running</h5>
+<div class="drow behind"><span class="flag" aria-hidden="true"></span><span class="no">305</span><span class="nm">Jo Nguyen</span><span class="jobs">Bike · 2 on</span></div>
+<div class="drow"><span class="no">122</span><span class="nm">Priya Singh</span><span class="jobs">Van · 4 on</span></div>
+<div class="drow"><span class="no">131</span><span class="nm">Chris Lee</span><span class="jobs">Car · 3 on</span></div>
+</div>
+</div>
+<div class="card">
+<h4>214 · Sam Taylor</h4>
+<p class="meta">Van · City · 1 job on board</p>
+<div class="behindbox new">Behind $171.00 this pay period<small>Pay period 19 Oct – 1 Nov · updated overnight</small></div>
+<p class="meta">Current work: 1 pickup, North Sydney → Parramatta</p>
+</div>
+</div>
+</div>
+</div>
+</figure>
+
+<figure>
+<figcaption><span class="where">Dispatch · Driver management · Driver earnings</span><h3>5. The dispatcher's overview</h3><p>The Driver earnings report in Driver management gets a pay-period view: every driver's days, hours, deliveries and how far behind they are, with the furthest behind first. The today view stays as it is.</p></figcaption>
+<div class="app" role="img" aria-label="Mock-up of the dispatch Driver earnings overview for the pay period">
+<div class="app-bar"><span class="crumb">Driver management › <b>Driver earnings</b></span><span class="pill">Dispatch</span></div>
+<div class="app-body">
+<div class="toolbar"><span class="ctl">Today</span><span class="ctl on new">This pay period</span><span class="ctl">19 Oct – 1 Nov</span></div>
+<table>
+<thead><tr><th>Driver</th><th>Vehicle</th><th class="r">Days</th><th class="r">Hours</th><th class="r">Deliveries</th><th class="r">Behind by</th></tr></thead>
+<tbody>
+<tr class="behind"><td>214 · Sam Taylor</td><td>Van</td><td class="r">5</td><td class="r">30.50</td><td class="r">41</td><td class="r"><span class="tag behind">$171.00</span></td></tr>
+<tr class="behind"><td>305 · Jo Nguyen</td><td>Bike</td><td class="r">6</td><td class="r">26.00</td><td class="r">58</td><td class="r"><span class="tag behind">$41.60</span></td></tr>
+<tr><td>118 · Alex Martin</td><td>Car</td><td class="r">8</td><td class="r">61.25</td><td class="r">96</td><td class="r"><span class="tag ok">On target</span></td></tr>
+<tr><td>122 · Priya Singh</td><td>Van</td><td class="r">4</td><td class="r">18.00</td><td class="r">27</td><td class="r"><span class="tag ok">On target</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+
+</div>
+</section></div>
+
+<div class="wrap"><section aria-labelledby="when">
+<h2 id="when">From here to the first pay run</h2>
+<div class="flow">
+<div class="step"><h3>Agree the rules</h3><p>Rates, minimum hours, rounding and what counts as earnings. Your answers below.</p></div>
+<div class="step"><h3>Build</h3><p>About a week once the rules are agreed.</p></div>
+<div class="step"><h3>Test</h3><p>A fortnight of test jobs on the test system in early December, checked against your current pay report.</p></div>
+<div class="step"><h3>Go live</h3><p>In place for the first January pay run.</p></div>
+</div>
+</section></div>
+
+<div class="wrap"><section aria-labelledby="same">
+<h2 id="same">What stays the same</h2>
+<div class="same">
+<ul>
+<li>Drivers are paid per job exactly as they are now. The top-up is an extra payment on top.</li>
+<li>Drivers not set as eligible are unaffected.</li>
+<li>Pay runs, RCTIs and deductions work as they do today.</li>
+<li>Dispatchers' screens only gain the highlight and the amount behind.</li>
+</ul>
+</div>
+</section></div>
+
+<div class="wrap"><section aria-labelledby="fb">
+<h2 id="fb">Your feedback</h2>
+<p class="lede">Answer as many as you like, then copy your answers and send them to your DFRNT contact. Your answers stay in this browser until you copy them.</p>
+
+<div class="who">
+<label for="fb-name">Your name<input id="fb-name" type="text" autocomplete="name"></label>
+<label for="fb-company">Company<input id="fb-company" type="text" autocomplete="organization"></label>
+</div>
+
+<form class="qs" id="qs" novalidate></form>
+
+<div class="actions">
+<button type="button" class="primary" id="copy">Copy my answers</button>
+<button type="button" class="secondary" id="clear">Clear answers</button>
+<span class="status" id="status" role="status"></span>
+</div>
+<textarea id="fallback" hidden readonly aria-label="Your answers, ready to copy"></textarea>
+</section></div>
+
+<div class="wrap"><footer>DFRNT · Deliver Different. Plan for discussion; details may change based on your feedback.</footer></div>
+</main>
+
+<script>
+(function () {
+var QUESTIONS = [
+["Minimum hours", "What is the minimum paid per shift in each city? Does a second block apply if a driver comes back after a break?"],
+["Hourly rates", "What are the hourly rates by vehicle? Which drivers have their own rate?"],
+["Which drivers", "Which drivers get the guarantee? Are any drivers paid fully by the hour instead of per job, and if so, should DFRNT pay their hours instead of their jobs?"],
+["What counts as earnings", "When comparing with the guarantee, should fuel and bonuses count, or just the job pay?"],
+["Rounding", "Should hours round up to the next 15 minutes, or something else?"],
+["Pay period", "What date does your fortnight start on?"],
+["Approvals", "Who approves top-ups, and how close to the pay run?"],
+["Corrections", "How do you handle early finishes, breakdowns and drivers sitting on jobs today? Who should be able to change a driver's hours?"],
+["Dispatcher view", "Is the red highlight and the amount behind enough for dispatchers? The today view already shows what each driver's jobs earned per hour. Should that stay?"],
+["Anything else", "Anything we've missed, or anything here that wouldn't work for you?"]
+];
+var KEY = "dfrnt-driver-topups-feedback-v1";
+var form = document.getElementById("qs");
+var name = document.getElementById("fb-name");
+var company = document.getElementById("fb-company");
+var status = document.getElementById("status");
+var fallback = document.getElementById("fallback");
+
+QUESTIONS.forEach(function (q, i) {
+  var box = document.createElement("div");
+  box.className = "q";
+  var id = "fb-q" + (i + 1);
+  box.innerHTML = '<label for="' + id + '">' + (i + 1) + '. ' + q[0] + '</label><p class="hint">' + q[1] + '</p><textarea id="' + id + '" rows="3"></textarea>';
+  form.appendChild(box);
+});
+var fields = [name, company].concat(QUESTIONS.map(function (_, i) { return document.getElementById("fb-q" + (i + 1)); }));
+
+function load() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    fields.forEach(function (f) { if (saved[f.id]) f.value = saved[f.id]; });
+  } catch (e) {}
+}
+function save() {
+  try {
+    var data = {};
+    fields.forEach(function (f) { data[f.id] = f.value; });
+    localStorage.setItem(KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+function compose() {
+  var lines = ["DFRNT driver top-ups feedback", "Name: " + (name.value.trim() || "-"), "Company: " + (company.value.trim() || "-"), ""];
+  QUESTIONS.forEach(function (q, i) {
+    var v = document.getElementById("fb-q" + (i + 1)).value.trim();
+    lines.push((i + 1) + ". " + q[0]);
+    lines.push(v || "(no answer)");
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
+fields.forEach(function (f) { f.addEventListener("input", function () { save(); status.textContent = ""; }); });
+form.addEventListener("submit", function (e) { e.preventDefault(); });
+
+document.getElementById("copy").addEventListener("click", function () {
+  var text = compose();
+  function showFallback() {
+    fallback.hidden = false;
+    fallback.value = text;
+    fallback.focus();
+    fallback.select();
+    status.textContent = "Select all the text in the box below and copy it.";
+  }
+  try {
+    navigator.clipboard.writeText(text).then(function () {
+      fallback.hidden = true;
+      status.textContent = "Copied. Paste your answers into an email to your DFRNT contact.";
+    }, showFallback);
+  } catch (e) { showFallback(); }
+});
+
+var clearBtn = document.getElementById("clear");
+var armed = false;
+clearBtn.addEventListener("click", function () {
+  if (!armed) {
+    armed = true;
+    clearBtn.textContent = "Click again to clear";
+    status.textContent = "This removes everything you've typed.";
+    setTimeout(function () { armed = false; clearBtn.textContent = "Clear answers"; }, 4000);
+    return;
+  }
+  armed = false;
+  clearBtn.textContent = "Clear answers";
+  fields.forEach(function (f) { f.value = ""; });
+  fallback.hidden = true;
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  status.textContent = "Answers cleared.";
+});
+
+load();
+})();
+</script>
+</body>
+</html>
